@@ -5,22 +5,29 @@ var frontMatter = require('gulp-front-matter');
 var nunjucks = require('nunjucks');
 var marked = require('gulp-marked');
 var plumber = require('gulp-plumber');
+var fs = require('fs');
+var extend = require('xtend/mutable');
 
 
 nunjucks.configure('template', {
 	watch: false
 });
 
+//get base.html template to use as a wrapper for pages
+var tpl = nunjucks.compile(fs.readFileSync('./template/base.html', {
+	encoding: 'utf8'
+}));
+
 
 gulp.task('default', function () {
 	/** Export all static pages */
 	gulp.src('./content/*.md')
 		//catch errors
-		.pipe(plumber({
-			errorHandler: function (e) {
-				console.error(e);
-			}
-		}))
+		// .pipe(plumber({
+		// 	errorHandler: function (e) {
+		// 		console.error(e);
+		// 	}
+		// }))
 
 		//parse front matter per file, write to data-attribute
 		.pipe(frontMatter({
@@ -32,9 +39,18 @@ gulp.task('default', function () {
 		.pipe(marked({
 		}))
 
-		//render resulting template
+		//render base template
 		.pipe(map(function (file, cb) {
-			file.contents = new Buffer(nunjucks.renderString(file.contents.toString(), file['data']));
+			file.contents = new Buffer(
+				tpl.render(
+					extend({
+						content: nunjucks.renderString(
+							file.contents.toString(),
+							file['data']
+						)
+					}, file['data'])
+				)
+			);
 
 			cb(null, file);
 		}))

@@ -17,7 +17,6 @@
   },
   "homepage": "https://github.com/dfcreative/2theater",
   "devDependencies": {
-    "consolidate": "^0.13.1",
     "gulp": "^3.8.11",
     "gulp-front-matter": "^1.2.2",
     "gulp-marked": "^1.0.0",
@@ -25,18 +24,8 @@
     "gulp-plumber": "^1.0.1",
     "gulp-rename": "^1.2.2",
     "map-stream": "0.0.5",
-    "metalsmith": "^1.7.0",
-    "metalsmith-collections": "^0.7.0",
-    "metalsmith-drafts": "0.0.1",
-    "metalsmith-markdown": "^0.2.1",
-    "metalsmith-metadata": "0.0.1",
-    "metalsmith-permalinks": "^0.4.0",
-    "metalsmith-tags": "^0.9.0",
-    "metalsmith-templates": "^0.7.0",
-    "swig": "^1.4.2",
     "through2": "^0.6.5",
-    "tinyliquid": "^0.2.29",
-    "vinyl-fs": "^1.0.0"
+    "xtend": "^4.0.0"
   },
   "dependencies": {}
 }
