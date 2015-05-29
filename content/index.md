@@ -1,5 +1,5 @@
----
-template: index.html
----
+Main page is a list of the most prominent plays to catch interest.
 
-<!-- Main page is a list of the most prominent. -->
+{% for genre, items in genres %}
+{{ genre }}
+{% endfor %}

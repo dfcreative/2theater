@@ -1,0 +1,12 @@
+{
+  "slug": "the-maids",
+  "alias": [],
+  "image": "1.jpg",
+  "template": "base.html",
+  "sharing": true,
+  "published": true,
+  "robots": "",
+  "comments": true,
+  "meta": true,
+  "seo": true
+}
