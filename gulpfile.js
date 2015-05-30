@@ -89,22 +89,19 @@ metadata._n = function () {
 gulp.task('default', [
 	'build-static-pages',
 	'build-images',
-	'build-plays'
+	'build-items'
 ]);
 
 
 /** Build html files */
 gulp.task('build-html', [
 	'build-static-pages',
-	'build-plays'
+	'build-items'
 ]);
 
 
 /** Export all static pages */
 gulp.task('build-static-pages', ['build-ia'], function () {
-	//special renderer
-	var renderer = new marked.Renderer();
-
 	return gulp.src('./content/*.md')
 
 		//ignore unchanged files
@@ -125,27 +122,7 @@ gulp.task('build-static-pages', ['build-ia'], function () {
 		//render base template
 		.pipe(map(
 			function (file, cb) {
-				//prerender content before markdown parser
-				var res = file.contents.toString('utf8').trim();
-
-				//provide pre-markdown rendering context
-				var data = extend(
-					clone(metadata),
-					file.data
-				);
-
-				res = nunjucks.renderString(res, data);
-
-				//render markdown
-				res = marked(res, {
-					renderer: renderer
-				});
-
-				//provide html rendering context
-				data.content = res;
-				res = tpl.render(data);
-
-				file.contents = new Buffer(res);
+				file.contents = new Buffer(renderMdFile(file));
 				cb(null, file);
 			})
 		)
@@ -172,7 +149,7 @@ gulp.task('build-ia', function () {
 	metadata.theaters = [];
 
 	//for each play collect genre, group by genres
-	return gulp.src('./content/play/*/index.md')
+	return gulp.src('./content/**/index.md')
 		.pipe(changed(paths.dest))
 
 		//parse front matter per file, write to data-attribute
@@ -181,54 +158,122 @@ gulp.task('build-ia', function () {
 			property: 'data'
 		}))
 
+
 		//for each file - collect data
 		.pipe(through.obj(function (file, enc, cb) {
 			//get play config info, append to .config property
-			var config = fs.readFileSync(path.dirname(file.path) + '/config.json', {
-				encoding: 'utf8'
-			});
-			config = file.data.config = JSON.parse(config);
+			var config = getConfig(file.path);
 
-			//ensure config slug
-			config.slug = config.slug || path.basename(path.dirname(file.path));
+			file.data.config = config;
 
-			//save global genres
-			var playGenres = file.data.genre || file.data.genres;
-			if (!Array.isArray(playGenres)) playGenres = [playGenres];
-			playGenres.forEach(function (genre) {
-				if (!metadata.genres[genre]) metadata.genres[genre] = [];
+			//collect genres for plays
+			if (config.type === 'play') {
+				//save global genres
+				var playGenres = file.data.genre || file.data.genres;
+				if (!Array.isArray(playGenres)) playGenres = [playGenres];
+				playGenres.forEach(function (genre) {
+					if (!metadata.genres[genre]) metadata.genres[genre] = [];
 
-				metadata.genres[genre].push(file.data);
-			});
+					metadata.genres[genre].push(file.data);
+				});
 
-			//save global plays
-			metadata.plays.push(file.data);
+				//save global plays
+				metadata.plays.push(file.data);
+			}
+
+			//collect theaters
+			else if (config.type === 'theater') {
+				//save global plays
+				metadata.theaters.push(file.data);
+			}
 
 			cb(null, file);
 		}));
 });
 
 
-/** Build plays pages */
-gulp.task('build-plays', ['build-ia'], function () {
-	//get plays by configs
-	gulp.src('./content/play/**/config.json')
-		// .pipe(changed(paths.dest))
+/** Return config for an .md file */
+function getConfig(filePath) {
+	var fileDir = path.dirname(filePath);
 
-		.pipe(plumber({
-			errorHandler: function (e) {
-				console.log(e)
-			}
+	try {
+
+		//get play config info, append to .config property
+		var config = fs.readFileSync(fileDir + '/config.json', {
+			encoding: 'utf8'
+		});
+		config = JSON.parse(config);
+
+		//set type: play/theater
+		if (!config.type) config.type = path.basename(path.dirname(fileDir));
+
+		//ensure config slug
+		if (!config.slug) config.slug = path.basename(fileDir);
+	} catch (e) {
+		config = {slug: path.basename(fileDir)};
+	}
+
+	return config;
+}
+
+/** Return rendered markdown string */
+function renderMdFile(file) {
+	//prerender content before markdown parser
+	var res = file.contents.toString('utf8').trim();
+
+	//provide pre-markdown rendering context
+	var data = extend(
+		clone(metadata),
+		file.data
+	);
+
+	res = nunjucks.renderString(res, data);
+
+	//render markdown
+	res = marked(res, {
+	});
+
+	//provide html rendering context
+	data.content = res;
+	res = tpl.render(data);
+
+	return res;
+}
+
+
+/** Build plays pages */
+gulp.task('build-items', ['build-ia'], function () {
+
+	//find each md, render it and place to folder
+	return gulp.src('./content/**/index.md')
+		.pipe(changed(paths.dest))
+
+		//parse front matter per file, write to data-attribute
+		.pipe(frontMatter({
+			remove: true,
+			property: 'data'
 		}))
 
-		.pipe(through.obj(function (file, enc, cb) {
-			var config = JSON.parse(file.contents.toString());
-			var slug = config.slug || path.basename(path.dirname(file.path));
+		//for each file - collect data
+		.pipe(map(function (file, cb) {
+			var config = getConfig(file.path);
 
-			//copy all images to target slug folder
+			file.data.config = config;
+
+			file.contents = new Buffer(renderMdFile(file));
 
 			cb(null, file);
-		}));
+		}))
+
+		//rename files to be served as index.html in directories
+		.pipe(rename(function (file) {
+			var config = getConfig('./content/' + file.dirname + '/config.json');
+
+			file.extname = '.html';
+			file.dirname = config.slug;
+		}))
+
+		.pipe(gulp.dest(paths.dest));
 });
 
 
@@ -240,20 +285,9 @@ gulp.task('build-images', function () {
 		.pipe(rename(function (file) {
 			var configPath = './content/' + path.dirname(file.dirname) + '/config.json';
 
-			try {
-				var config = fs.readFileSync(configPath, {
-					encoding: 'utf8'
-				});
+			config = getConfig(configPath);
 
-				config = JSON.parse(config);
-			} catch (e) {
-				console.error(e);
-				config = {};
-			}
-
-			var slug = config.slug || path.basename(path.dirname(configPath));
-
-			file.dirname = slug + '/image';
+			file.dirname = config.slug + '/image';
 		}))
 
 		//resize
@@ -302,7 +336,7 @@ gulp.task('build-css', function () {
 
 /** Rerun the task when a file changes */
 gulp.task('watch', function() {
-	gulp.watch([paths.html, './content/**/*'], ['build-ia', 'build-static-pages', 'build-plays']);
+	gulp.watch([paths.html, './content/**/*'], ['build-ia', 'build-static-pages', 'build-items']);
 	gulp.watch(paths.js, ['build-js']);
 	gulp.watch(paths.css, ['build-css']);
 });
