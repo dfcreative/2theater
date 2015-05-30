@@ -1,1 +1,1 @@
-Main page is a list of the most prominent plays to catch interest.
+About page

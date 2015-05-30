@@ -5,17 +5,12 @@
 
 <title>{{ title }}</title>
 
-<style>
-	/** Critical css */
-</style>
+<link rel="stylesheet" type="text/css" href="/index.css">
 
-<section class="page">
-	{% block content %}{{ content }}{% endblock %}
-</section>
+<section class="page">{% block content %}{{ content }}{% endblock %}</section>
 
 <footer class="site-footer">
 	<a href="https://github.com/dfcreative">DY</a>
 </footer>
 
-<link rel="stylesheet" type="text/css" href="/bundle.css">
-<script src="/bundle.js"></script>
+<script src="/index.js"></script>

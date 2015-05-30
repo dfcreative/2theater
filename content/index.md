@@ -1,5 +1,5 @@
-Main page is a list of the most prominent plays to catch interest.
-
-{% for genre, items in genres %}
-{{ genre }}
+{% for play in plays %}
+<article class="play">
+	<img class="play-preview" src="{{ getThumbnail(play) }}"/>
+</article>
 {% endfor %}

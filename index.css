@@ -1,0 +1,10 @@
+@import 'normalize.css';
+
+body {
+	background: linear-gradient(90deg, #EC6F66 10%, #F3A183 90%);
+	padding: 0 20px;
+}
+
+.page {
+	background: white;
+}
