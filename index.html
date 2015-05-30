@@ -7,26 +7,80 @@
 
 <link rel="stylesheet" type="text/css" href="/index.css">
 
-<body lang="{{ locale }}">
+<body lang="{{ locale }}" class="page {% if item %}page-item{% else %}page-feed{% endif %}">
 
-<header class="site-header">
-	<a href="/" class="site-menu-link">☰</a>
+<header class="page-header">
+	{% if not item %}
+		<a href="/" class="page-menu-link">☰</a>
 
-	<div class="site-logo">
-		<a href="/" class="site-logo-link">{{ _('Theater') }}</a>
-	</div>
+		<div class="page-logo">
+			<a href="/" class="page-logo-link">{{ _('Theater') }}</a> <sup>α</sup>
+		</div>
 
-	<a href="/" class="site-lang-link">{{ locale|capitalize }}</a>
+		<a href="/" class="page-lang-link">{{ locale|capitalize }}</a>
+	{% else %}
+		<a href="/" class="page-back-link">‹</a>
+	{% endif %}
 </header>
 
-<section class="site-content">{% block content %}{{ content }}{% endblock %}</section>
+{% if item %}
+<div class="page-preview">
+	{% if item.config.images %}
+		{% for image in item.config.images %}
+			<img class="page-preview-image" src="{{ image }}"/>
+		{% endfor %}
 
-<footer class="site-footer">
-	<div class="site-footer-text">
+			<!--<div class="play-preview swiper-container">
+				<div class="swiper-wrapper">
+					{% for image in item.config.images %}
+						<div class="swiper-slide">
+							<img data-src="{{ image }}" class="swiper-lazy">
+							<div class="swiper-lazy-preloader"></div>
+						</div>
+					{% endfor %}
+				</div>
+			</div>-->
+
+	{% else %}
+		<img class="page-preview-image" src="{{ item.config.thumbnail }}"/>
+	{% endif %}
+</div>
+{% endif %}
+
+<section class="page-content">
+	{% if item %}
+		<header class="page-content-header">
+			<h1 class="page-content-title">{{ item.title }}</h1>
+			<div class="page-content-original-title">{{ item.original_title }}</div>
+		</header>
+	{% endif %}
+
+	{% block content %}
+		{{ content }}
+	{% endblock %}
+
+	{% if item %}
+		<div id="disqus_thread" class="page-comments"></div>
+		<script type="text/javascript">
+			/* * * CONFIGURATION VARIABLES * * */
+			var disqus_shortname = '2theater';
+
+			(function() {
+			var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+		</script>
+	{% endif %}
+</section>
+
+<footer class="page-footer">
+	<div class="page-footer-text">
 		Проект "В театр" — некоммерческая коллекция знаменательных театральных постановок, которые стоит увидеть любому человеку, увлекающемуся или связанному с театром.
 	</div>
 
-	<a href="https://github.com/dfcreative" class="site-footer-link">{{ _('Deema Ywanov') }}</a>
+	<div class="page-footer-credits">
+		{{ _('Made by') }}
+		<a href="https://github.com/dfcreative" class="page-footer-link">{{ _('Deema Ywanov') }}</a>
+	</div>
 </footer>
 
 <script src="/index.js"></script>

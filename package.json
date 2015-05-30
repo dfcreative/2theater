@@ -49,6 +49,9 @@
   },
   "dependencies": {
     "clean-html": "^1.3.5",
-    "normalize.css": "^3.0.3"
+    "emmy": "^5.2.8",
+    "normalize.css": "^3.0.3",
+    "queried": "^1.4.1",
+    "swiper": "^3.0.7"
   }
 }

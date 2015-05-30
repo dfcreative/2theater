@@ -55,10 +55,10 @@ var metadata = {
 
 
 /** Return absolute url from the  */
-metadata.getThumbnailUrl = function (item) {
+metadata.getThumbnailUrl = function (item, url) {
 	if (!item.config) return;
 
-	var thumbUrl = item.config.thumbnail;
+	var thumbUrl = url || item.config.thumbnail;
 
 	return path.normalize(metadata.root + '/' + item.config.slug + '/' + thumbUrl);
 };
@@ -150,7 +150,7 @@ gulp.task('build-ia', function () {
 
 	//for each play collect genre, group by genres
 	return gulp.src('./content/**/index.md')
-		.pipe(changed(paths.dest))
+		// .pipe(changed(paths.dest))
 
 		//parse front matter per file, write to data-attribute
 		.pipe(frontMatter({
@@ -222,10 +222,14 @@ function renderMdFile(file) {
 	var res = file.contents.toString('utf8').trim();
 
 	//provide pre-markdown rendering context
-	var data = extend(
-		clone(metadata),
-		file.data
-	);
+	var data = clone(metadata);
+
+	//pass item object to items template
+	if (file.data.config && file.data.config.type) {
+		data = extend(data, {
+			item: file.data
+		});
+	}
 
 	res = nunjucks.renderString(res, data);
 
@@ -246,7 +250,13 @@ gulp.task('build-items', ['build-ia'], function () {
 
 	//find each md, render it and place to folder
 	return gulp.src('./content/**/index.md')
-		.pipe(changed(paths.dest))
+		// .pipe(changed(paths.dest))
+
+		.pipe(plumber({
+			errorHandler: function (e) {
+				console.log(e);
+			}
+		}))
 
 		//parse front matter per file, write to data-attribute
 		.pipe(frontMatter({
@@ -292,8 +302,8 @@ gulp.task('build-images', function () {
 
 		//resize
 		.pipe(resize({
-			width : 320,
-			height : 320,
+			width : 666,
+			height : 424,
 			crop : true,
 			upscale : true
 		}))
@@ -336,6 +346,8 @@ gulp.task('build-css', function () {
 
 /** Rerun the task when a file changes */
 gulp.task('watch', function() {
+	gulp.start(['build-js', 'build-css']);
+
 	gulp.watch([paths.html, './content/**/*'], ['build-ia', 'build-static-pages', 'build-items']);
 	gulp.watch(paths.js, ['build-js']);
 	gulp.watch(paths.css, ['build-css']);

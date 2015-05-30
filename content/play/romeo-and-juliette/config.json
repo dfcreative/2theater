@@ -1,4 +1,7 @@
 {
 	"title": "Romeo and Juliette",
-	"thumbnail": "./image/1.jpg"
+	"thumbnail": "./image/1.jpg",
+	"images": [
+		"./image/1.jpg"
+	]
 }
