@@ -1,10 +1,111 @@
 @import 'normalize.css';
 
-body {
-	background: linear-gradient(90deg, #EC6F66 10%, #F3A183 90%);
-	padding: 0 20px;
+html {
+	background-image: linear-gradient(87deg, #232526 10%, #414345 90%);
+	background-repeat: no-repeat;
 }
 
-.page {
-	background: white;
+* {
+	box-sizing: border-box;
+}
+
+body {
+	/*background-image: linear-gradient(45deg, #EC6F66 10%, #F3A183 90%);*/
+	padding: 0 5px;
+	color: white;
+	min-height: 480px;
+	position: relative;
+}
+
+.site-header {
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 8px;
+	right: 8px;
+	text-align: center;
+	color: white;
+	line-height: 40px;
+	min-height: 40px;
+}
+
+.site-logo {
+	width: 140px;
+	position: absolute;
+	right: 0;
+	left: 0;
+	top: 0;
+	margin: 0 auto;
+	background: linear-gradient(to bottom, #485563 10%, #29323c 101%);
+	text-align: center;
+	box-shadow: 0 1px 4px 2px rgba(0,0,0,.2);
+}
+.site-logo:after {
+	content: '';
+	position: absolute;
+	bottom: -10px;
+	left: 0;
+	border-top: 10px solid #29323c;
+	border-left: 70px solid transparent;
+	border-right: 70px solid transparent;
+	border-bottom: 0;
+}
+.site-logo-link{
+	font-family: serif;
+	font-weight: bold;
+	text-decoration: none;
+	color: white;
+	font-style: oblique;
+	font-size: 24px;
+	border-bottom: 1px solid rgba(255,255,255,.3);
+}
+
+.site-menu-link {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 40px;
+	height: 40px;
+	color: white;
+	font-weight: bolder;
+	text-decoration: none;
+}
+
+.site-lang-link {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 40px;
+	height: 40px;
+	color: white;
+	font-weight: bolder;
+	text-decoration: none;
+}
+
+.site-content {
+	color: black;
+}
+
+.site-footer {
+	padding: 20px 10px;
+	color: white;
+}
+
+.site-footer-text {
+	margin: 0 0 20px;
+}
+
+.site-footer-link {
+	color: white;
+}
+
+
+.play {
+	position: relative;
+	padding-bottom: 0px;
+}
+
+.play-preview {
+	display: block;
+	min-width: 100%;
 }

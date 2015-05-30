@@ -7,10 +7,28 @@
 
 <link rel="stylesheet" type="text/css" href="/index.css">
 
-<section class="page">{% block content %}{{ content }}{% endblock %}</section>
+<body lang="{{ locale }}">
+
+<header class="site-header">
+	<a href="/" class="site-menu-link">☰</a>
+
+	<div class="site-logo">
+		<a href="/" class="site-logo-link">{{ _('Theater') }}</a>
+	</div>
+
+	<a href="/" class="site-lang-link">{{ locale|capitalize }}</a>
+</header>
+
+<section class="site-content">{% block content %}{{ content }}{% endblock %}</section>
 
 <footer class="site-footer">
-	<a href="https://github.com/dfcreative">DY</a>
+	<div class="site-footer-text">
+		Проект "В театр" — некоммерческая коллекция знаменательных театральных постановок, которые стоит увидеть любому человеку, увлекающемуся или связанному с театром.
+	</div>
+
+	<a href="https://github.com/dfcreative" class="site-footer-link">{{ _('Deema Ywanov') }}</a>
 </footer>
 
 <script src="/index.js"></script>
+
+</body>

@@ -19,6 +19,7 @@ var imgo = require('gulp-imagemin');
 var resize = require('gulp-image-resize');
 var browserify = require('browserify');
 var postcss = require('gulp-postcss');
+var i18n = require('i18n');
 
 
 nunjucks.configure('template', {
@@ -33,25 +34,54 @@ var tpl = nunjucks.compile(fs.readFileSync('./index.html', {
 }));
 
 
-/** Destination folder */
-var DEST = '_site';
+/** Paths */
+var paths = {
+	dest: '_site',
+	html: './index.html',
+	js: './index.js',
+	css: './index.css',
+	locale: './locale'
+};
 
 
 /** Project metadata/env. Everything in there will be accessible while rendering */
 var metadata = {
 	root: '',
+	locale: 'ru',
+	locales: ['en', 'ru' ,'fr'],
 	title: 'To theater',
 	description: 'A collection of the best theatrical plays'
 };
 
 
 /** Return absolute url from the  */
-metadata.getThumbnail = function (item) {
+metadata.getThumbnailUrl = function (item) {
 	if (!item.config) return;
 
 	var thumbUrl = item.config.thumbnail;
 
 	return path.normalize(metadata.root + '/' + item.config.slug + '/' + thumbUrl);
+};
+
+/** Return item url */
+metadata.getUrl = function (item) {
+	if (!item.config) return;
+
+	return path.normalize(metadata.root + '/' + item.config.slug);
+};
+
+
+/** Get translation for the current locale */
+i18n.configure({
+	locales: metadata.locales,
+	defaultLocale: metadata.locale,
+	directory: paths.locale
+});
+metadata._ = function () {
+	return i18n.__.apply(this, arguments);
+};
+metadata._n = function () {
+	return i18n.__n.apply(this, arguments);
 };
 
 
@@ -75,10 +105,16 @@ gulp.task('build-static-pages', ['build-ia'], function () {
 	//special renderer
 	var renderer = new marked.Renderer();
 
-	gulp.src('./content/*.md')
+	return gulp.src('./content/*.md')
 
 		//ignore unchanged files
-		.pipe(changed(DEST))
+		// .pipe(changed(paths.dest))
+
+		.pipe(plumber({
+			errorHandler: function (e) {
+				console.log(e);
+			}
+		}))
 
 		//parse front matter per file, write to data-attribute
 		.pipe(frontMatter({
@@ -124,7 +160,7 @@ gulp.task('build-static-pages', ['build-ia'], function () {
 		}))
 
 		//finally write to the output dir
-		.pipe(gulp.dest(DEST));
+		.pipe(gulp.dest(paths.dest));
 });
 
 
@@ -136,8 +172,8 @@ gulp.task('build-ia', function () {
 	metadata.theaters = [];
 
 	//for each play collect genre, group by genres
-	gulp.src('./content/play/*/index.md')
-		.pipe(changed(DEST))
+	return gulp.src('./content/play/*/index.md')
+		.pipe(changed(paths.dest))
 
 		//parse front matter per file, write to data-attribute
 		.pipe(frontMatter({
@@ -152,6 +188,9 @@ gulp.task('build-ia', function () {
 				encoding: 'utf8'
 			});
 			config = file.data.config = JSON.parse(config);
+
+			//ensure config slug
+			config.slug = config.slug || path.basename(path.dirname(file.path));
 
 			//save global genres
 			var playGenres = file.data.genre || file.data.genres;
@@ -171,10 +210,16 @@ gulp.task('build-ia', function () {
 
 
 /** Build plays pages */
-gulp.task('build-plays', function () {
+gulp.task('build-plays', ['build-ia'], function () {
 	//get plays by configs
 	gulp.src('./content/play/**/config.json')
-		.pipe(changed(DEST))
+		// .pipe(changed(paths.dest))
+
+		.pipe(plumber({
+			errorHandler: function (e) {
+				console.log(e)
+			}
+		}))
 
 		.pipe(through.obj(function (file, enc, cb) {
 			var config = JSON.parse(file.contents.toString());
@@ -190,7 +235,7 @@ gulp.task('build-plays', function () {
 /** Build images */
 gulp.task('build-images', function () {
 	gulp.src('./content/**/image/*')
-		.pipe(changed(DEST))
+		.pipe(changed(paths.dest))
 
 		.pipe(rename(function (file) {
 			var configPath = './content/' + path.dirname(file.dirname) + '/config.json';
@@ -213,10 +258,10 @@ gulp.task('build-images', function () {
 
 		//resize
 		.pipe(resize({
-			width : 200,
-			height : 200,
+			width : 320,
+			height : 320,
 			crop : true,
-			upscale : false
+			upscale : true
 		}))
 
 		//optimize image
@@ -225,26 +270,39 @@ gulp.task('build-images', function () {
 			optimizationLevel: 7
 		}))
 
-		.pipe(gulp.dest(DEST));
+		.pipe(gulp.dest(paths.dest));
 });
 
 
 /** Build js */
 gulp.task('build-js', function () {
-	var b = browserify('./index.js');
+	var b = browserify(paths.js);
 	b.bundle().pipe(
-		fs.createWriteStream(DEST + '/index.js')
+		fs.createWriteStream(paths.dest + '/index.js')
 	);
 });
 
 
 /** Build css */
 gulp.task('build-css', function () {
-	gulp.src('./index.css')
+	gulp.src(paths.css)
+		.pipe(plumber({
+			errorHandler: function (e) {
+				console.log(e)
+			}
+		}))
 		.pipe(postcss([
 			require('postcss-import')()
-			// , require('autoprefixer')()
+			, require('autoprefixer')()
 			// , require('cssnano')()
 		]))
-		.pipe(gulp.dest(DEST));
+		.pipe(gulp.dest(paths.dest));
+});
+
+
+/** Rerun the task when a file changes */
+gulp.task('watch', function() {
+	gulp.watch([paths.html, './content/**/*'], ['build-ia', 'build-static-pages', 'build-plays']);
+	gulp.watch(paths.js, ['build-js']);
+	gulp.watch(paths.css, ['build-css']);
 });
