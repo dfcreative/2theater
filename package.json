@@ -9,7 +9,10 @@
     "build-css": "gulp build-css",
     "build-js": "gulp build-js",
     "build-images": "gulp build-images",
-    "watch": "gulp watch"
+    "watch": "gulp watch",
+    "min": "npm run min-css && npm run min-js",
+    "min-css": "cssnano _site/index.css _site/index.min.css && mv _site/index.min.css _site/index.css",
+    "min-js": "cat _site/index.js | ccjs - --language_in=ECMASCRIPT5 > _site/index.min.js && mv _site/index.min.js _site/index.js"
   },
   "repository": {
     "type": "git",

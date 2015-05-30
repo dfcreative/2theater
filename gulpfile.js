@@ -88,7 +88,7 @@ metadata._n = function () {
 /** Defaultly build all */
 gulp.task('default', [
 	'build-static-pages',
-	'build-images',
+	// 'build-images',
 	'build-items'
 ]);
 
@@ -302,8 +302,8 @@ gulp.task('build-images', function () {
 
 		//resize
 		.pipe(resize({
-			width : 666,
-			height : 424,
+			width : 800,
+			height : 510,
 			crop : true,
 			upscale : true
 		}))
@@ -338,14 +338,13 @@ gulp.task('build-css', function () {
 		.pipe(postcss([
 			require('postcss-import')()
 			, require('autoprefixer')()
-			// , require('cssnano')()
 		]))
 		.pipe(gulp.dest(paths.dest));
 });
 
 
 /** Rerun the task when a file changes */
-gulp.task('watch', function() {
+gulp.task('watch', function () {
 	gulp.start(['build-js', 'build-css']);
 
 	gulp.watch([paths.html, './content/**/*'], ['build-ia', 'build-static-pages', 'build-items']);
