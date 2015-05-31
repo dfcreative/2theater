@@ -249,7 +249,14 @@ function renderMdFile(file) {
 
 	//provide html rendering context
 	data.content = res;
-	res = nunjucks.render('base.html', data);
+
+	//default template for single items is single.html, otherwise declare it
+	var tpl = ( data.item && data.item.config && data.item.config.template )
+		|| ( data.item && data.item.template )
+		|| data.template
+		|| ( data.item && data.item.type ? 'single.html' : 'base.html' );
+
+	res = nunjucks.render(tpl, data);
 
 	return res;
 }

@@ -80,7 +80,6 @@ html {
 	right: 0;
 	left: auto;
 }
-
 .page-lang-link {
 	display: none;
 	position: absolute;
@@ -98,54 +97,52 @@ html {
 	position: relative;
 	margin-right: -4px;
 }
-.page-content-header {
-	padding-top: 1rem;
-}
-.page-content-title {
-	margin: 0 0 .33rem;
-}
-.page-content-original-title {
-	color: gray;
-	font-size: small;
-}
-
-.page-item .page-content {
-	background: white;
-	padding: 0 1rem;
-	margin: 0;
-}
-
-
-.page-preview {
-	white-space: nowrap;
-	overflow: hidden;
-}
-.page-preview-image{
-	max-width: 100%;
-	display: inline-block;
-	vertical-align: top;
-}
-
-.page-comments {
-	padding: 0 0 1rem;
-}
-
 
 .page-footer {
 	clear: both;
 	padding: 20px 4px;
 	color: white;
 }
-
 .page-footer-text {
 	margin: 0 0 20px;
 }
-
 .page-footer-link {
 	color: white;
 }
 
+.single-content {
+	background: white;
+	padding: 0 1rem;
+	margin: 0;
+}
+.single-header {
+	padding-top: 1rem;
+}
+.single-title {
+	margin: 0 0 .33rem;
+}
+.single-original-title {
+	color: gray;
+	font-size: small;
+}
 
+
+/** Single is a single item page */
+.single-preview {
+	white-space: nowrap;
+	overflow: hidden;
+}
+.single-preview-image{
+	max-width: 100%;
+	display: inline-block;
+	vertical-align: top;
+}
+.single-comments {
+	padding: 0 0 1rem;
+}
+
+
+/* Items are in feeds */
 .item {
 	position: relative;
 }
@@ -170,7 +167,6 @@ html {
 	display: block;
 	max-width: 100%;
 }
-
 
 @media (min-width: 768px) {
 	.item {

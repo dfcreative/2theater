@@ -2,8 +2,16 @@
 
 A collection of famous theater plays must see.
 
+To build production into `package.name` root, run
+
 ```
 $ npm run build
+```
+
+To build dev into `_site`, run
+
+```
+$ npm run watch
 ```
 
 ### Principles

@@ -1,0 +1,39 @@
+{#
+Single item rendering template - vanue, performance, static page
+Includes blocks related to rendering an  item
+#}
+
+{% extends "base.html" %}
+
+{% block page_header %}
+	{# Show only back button on the single page link #}
+	<a href="{{ getUrl('/') }}" class="page-back-link">‹</a>
+{% endblock %}
+
+{% block page_content %}
+	{# Big slider #}
+	{% set previewClass = "page" %}
+	{% include "preview.html" %}
+
+	<div class="single-content">
+		{# Header #}
+		<header class="single-header">
+			<h1 class="single-title">{{ item.title }}</h1>
+			<div class="single-original-title">{{ item.original_title }}</div>
+		</header>
+
+		{# Main content #}
+			{{ super() }}
+
+		{# Comments #}
+		<div id="disqus_thread" class="single-comments"></div>
+		<script type="text/javascript">
+			/* * * CONFIGURATION VARIABLES * * */
+			var disqus_shortname = '2theater';
+
+			(function() {
+			var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+		</script>
+	</div>
+{% endblock %}

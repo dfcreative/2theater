@@ -1,4 +1,6 @@
-﻿<!doctype html>
+﻿{# Generic template to be the base for inheritance #}
+
+<!doctype html>
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,7 +12,7 @@
 <body lang="{{ locale }}" class="page {% if item %}page-item{% else %}page-feed{% endif %}">
 
 <header class="page-header">
-	{% if not item %}
+	{% block page_header %}
 		<a href="{{ getUrl('/') }}" class="page-menu-link">☰</a>
 
 		<div class="page-logo">
@@ -18,50 +20,24 @@
 		</div>
 
 		<a href="{{ getUrl('/') }}" class="page-lang-link">{{ locale|capitalize }}</a>
-	{% else %}
-		<a href="{{ getUrl('/') }}" class="page-back-link">‹</a>
-	{% endif %}
+	{% endblock %}
 </header>
 
-{% if item %}
-{% set previewClass = "page" %}
-{% include "preview.html" %}
-{% endif %}
-
 <section class="page-content">
-	{% if item %}
-		<header class="page-content-header">
-			<h1 class="page-content-title">{{ item.title }}</h1>
-			<div class="page-content-original-title">{{ item.original_title }}</div>
-		</header>
-	{% endif %}
-
-	{% block content %}
-		{{ content }}
-	{% endblock %}
-
-	{% if item %}
-		<div id="disqus_thread" class="page-comments"></div>
-		<script type="text/javascript">
-			/* * * CONFIGURATION VARIABLES * * */
-			var disqus_shortname = '2theater';
-
-			(function() {
-			var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;	dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-			})();
-		</script>
-	{% endif %}
+	{% block page_content %}{{ content }}{% endblock %}
 </section>
 
 <footer class="page-footer">
-	<div class="page-footer-text">
-		Проект "В театр" — некоммерческая коллекция знаменательных театральных постановок, которые стоит увидеть любому человеку, увлекающемуся или связанному с театром.
-	</div>
+	{% block page_footer %}
+		<div class="page-footer-text">
+			Проект "В театр" — некоммерческая коллекция знаменательных театральных постановок, которые стоит увидеть любому человеку, увлекающемуся или связанному с театром.
+		</div>
 
-	<div class="page-footer-credits">
-		{{ _('Made by') }}
-		<a href="https://github.com/dfcreative" class="page-footer-link">{{ _('Deema Ywanov') }}</a>
-	</div>
+		<div class="page-footer-credits">
+			{{ _('Made by') }}
+			<a href="https://github.com/dfcreative" class="page-footer-link">{{ _('Deema Ywanov') }}</a>
+		</div>
+	{% endblock %}
 </footer>
 
 <script src="{{ getUrl('/index.js') }}"></script>
