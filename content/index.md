@@ -1,6 +1,6 @@
 {% for play in plays %}
 <article class="play">
-	<a href="{{ getUrl(play) }}" class="play-link">
+	<a href="{{ getItemUrl(play) }}" class="play-link">
 		{% if play.config.images %}
 			<div class="play-preview swiper-container">
 				<div class="swiper-wrapper">

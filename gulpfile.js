@@ -46,7 +46,7 @@ var paths = {
 
 /** Project metadata/env. Everything in there will be accessible while rendering */
 var metadata = {
-	root: '',
+	root: '_site',
 	locale: 'ru',
 	locales: ['en', 'ru' ,'fr'],
 	title: 'To theater',
@@ -60,14 +60,20 @@ metadata.getThumbnailUrl = function (item, url) {
 
 	var thumbUrl = url || item.config.thumbnail;
 
-	return path.normalize(metadata.root + '/' + item.config.slug + '/' + thumbUrl);
+	return path.normalize('/' + metadata.root + '/' + item.config.slug + '/' + thumbUrl);
 };
 
 /** Return item url */
-metadata.getUrl = function (item) {
-	if (!item.config) return;
+metadata.getItemUrl = function (item) {
+	if (!item.config) return '/' + metadata.root + '/';
 
-	return path.normalize(metadata.root + '/' + item.config.slug);
+	return '/' + metadata.root + '/' + item.config.slug;
+};
+
+/** Return absolute url */
+metadata.getUrl = function (path) {
+	if (path[0] === '/') path = path.slice(1);
+	return '/' + metadata.root + '/' + path;
 };
 
 
@@ -85,12 +91,16 @@ metadata._n = function () {
 };
 
 
-/** Defaultly build all */
-gulp.task('default', [
-	'build-static-pages',
-	// 'build-images',
-	'build-items'
-]);
+
+/** Defaultly build production */
+gulp.task('default', function () {
+	metadata.root = require('./package.json').name;
+	gulp.start([
+		'build-js',
+		'build-css',
+		'build-html'
+	]);
+});
 
 
 /** Build html files */
@@ -167,7 +177,7 @@ gulp.task('build-ia', function () {
 			file.data.config = config;
 
 			//collect genres for plays
-			if (config.type === 'play') {
+			if (file.data.type === 'performance') {
 				//save global genres
 				var playGenres = file.data.genre || file.data.genres;
 				if (!Array.isArray(playGenres)) playGenres = [playGenres];
@@ -182,7 +192,7 @@ gulp.task('build-ia', function () {
 			}
 
 			//collect theaters
-			else if (config.type === 'theater') {
+			else if (file.data.type === 'place') {
 				//save global plays
 				metadata.theaters.push(file.data);
 			}
@@ -203,9 +213,6 @@ function getConfig(filePath) {
 			encoding: 'utf8'
 		});
 		config = JSON.parse(config);
-
-		//set type: play/theater
-		if (!config.type) config.type = path.basename(path.dirname(fileDir));
 
 		//ensure config slug
 		if (!config.slug) config.slug = path.basename(fileDir);

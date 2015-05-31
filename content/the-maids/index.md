@@ -1,5 +1,6 @@
 ---
 title: Служанки
+type: performance
 original_title: Les bonnes
 genre: драма
 duration: P2H30M

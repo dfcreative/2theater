@@ -1,5 +1,6 @@
----
+﻿---
 title: Баядерка
+type: performance
 original_title: "La bayadere"
 genre: балет
 duration: P2H30M

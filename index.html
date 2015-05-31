@@ -5,21 +5,21 @@
 
 <title>{{ title }}</title>
 
-<link rel="stylesheet" type="text/css" href="/index.css">
+<link rel="stylesheet" type="text/css" href="{{ getUrl('/index.css') }}">
 
 <body lang="{{ locale }}" class="page {% if item %}page-item{% else %}page-feed{% endif %}">
 
 <header class="page-header">
 	{% if not item %}
-		<a href="/" class="page-menu-link">☰</a>
+		<a href="{{ getUrl('/') }}" class="page-menu-link">☰</a>
 
 		<div class="page-logo">
-			<a href="/" class="page-logo-link">{{ _('Theater') }}</a> <sup>α</sup>
+			<a href="{{ getUrl('/') }}" class="page-logo-link">{{ _('Theater') }}</a> <sup>α</sup>
 		</div>
 
-		<a href="/" class="page-lang-link">{{ locale|capitalize }}</a>
+		<a href="{{ getUrl('/') }}" class="page-lang-link">{{ locale|capitalize }}</a>
 	{% else %}
-		<a href="/" class="page-back-link">‹</a>
+		<a href="{{ getUrl('/') }}" class="page-back-link">‹</a>
 	{% endif %}
 </header>
 
@@ -27,7 +27,7 @@
 <div class="page-preview">
 	{% if item.config.images %}
 		{% for image in item.config.images %}
-			<img class="page-preview-image" src="{{ image }}"/>
+			<img class="page-preview-image" src="{{ getThumbnailUrl(item, image) }}"/>
 		{% endfor %}
 
 			<!--<div class="play-preview swiper-container">
@@ -42,7 +42,7 @@
 			</div>-->
 
 	{% else %}
-		<img class="page-preview-image" src="{{ item.config.thumbnail }}"/>
+		<img class="page-preview-image" src="{{ getThumbnailUrl(item, item.config.thumbnail ) }}"/>
 	{% endif %}
 </div>
 {% endif %}
@@ -83,6 +83,6 @@
 	</div>
 </footer>
 
-<script src="/index.js"></script>
+<script src="{{ getUrl('/index.js') }}"></script>
 
 </body>

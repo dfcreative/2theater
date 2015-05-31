@@ -1,5 +1,6 @@
----
+﻿---
 title: Жизель
+type: performance
 original_title: "Giselle, ou les Wilis"
 genre: балет
 duration: P2H30M

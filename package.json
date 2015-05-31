@@ -4,7 +4,7 @@
   "description": "Theater plays collection",
   "main": "index.js",
   "scripts": {
-    "build": "npm run build-html && npm run build-css && npm run build-js && npm run build-images",
+    "build": "gulp && npm run min",
     "build-html": "gulp build-html",
     "build-css": "gulp build-css",
     "build-js": "gulp build-js",
