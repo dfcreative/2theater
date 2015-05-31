@@ -164,7 +164,7 @@ gulp.task('build-ia', function () {
 	metadata.venues = [];
 
 	//for each play collect genre, group by genres
-	return gulp.src('./content/**/index.md')
+	return gulp.src('./content/*/index.md')
 		// .pipe(changed(paths.dest))
 
 		//parse front matter per file, write to data-attribute
@@ -269,7 +269,7 @@ function renderMdFile(file) {
 gulp.task('build-items', ['build-ia'], function () {
 
 	//find each md, render it and place to folder
-	return gulp.src('./content/**/index.md')
+	return gulp.src('./content/*/index.md')
 		// .pipe(changed(paths.dest))
 
 		.pipe(plumber({
@@ -312,7 +312,7 @@ gulp.task('build-images', function () {
 	var imgo = require('gulp-imagemin');
 	var resize = require('gulp-image-resize');
 
-	gulp.src('./content/**/image/*')
+	gulp.src('./content/*/image/*')
 		.pipe(changed(paths.dest))
 
 		.pipe(rename(function (file) {
