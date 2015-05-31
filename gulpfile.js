@@ -5,39 +5,27 @@
 var gulp = require('gulp');
 var rename = require('gulp-rename');
 var map = require('map-stream');
-var through = require('through2');
 var frontMatter = require('gulp-front-matter');
-var nunjucks = require('nunjucks');
-var marked = require('marked');
 var plumber = require('gulp-plumber');
 var fs = require('fs');
 var extend = require('xtend/mutable');
 var changed = require('gulp-changed');
 var clone = require('clone');
 var path = require('path');
-var imgo = require('gulp-imagemin');
-var resize = require('gulp-image-resize');
-var browserify = require('browserify');
-var postcss = require('gulp-postcss');
 var i18n = require('i18n');
 
 
-nunjucks.configure('template', {
-	watch: false
-});
 
 /**
- * get base template to use as a wrapper for pages
+ * Base template to use as a wrapper for pages
  */
-var tpl = nunjucks.compile(fs.readFileSync('./index.html', {
-	encoding: 'utf8'
-}));
+var tpl, nunjucks, marked;
 
 
 /** Paths */
 var paths = {
+	html: './template/*',
 	dest: '_site',
-	html: './index.html',
 	js: './index.js',
 	css: './index.css',
 	locale: './locale'
@@ -104,10 +92,25 @@ gulp.task('default', function () {
 
 
 /** Build html files */
-gulp.task('build-html', [
-	'build-static-pages',
-	'build-items'
-]);
+gulp.task('build-html', function () {
+	nunjucks = require('nunjucks');
+	marked = require('marked');
+
+	nunjucks.configure('./template', {
+		watch: false
+	});
+
+	//NOTE: not used to let debugging go faster
+	//FIXME: use in production
+	// tpl = nunjucks.compile(fs.readFileSync('./template/base.html', {
+	// 	encoding: 'utf8'
+	// }));
+
+	gulp.start([
+		'build-static-pages',
+		'build-items'
+	]);
+});
 
 
 /** Export all static pages */
@@ -155,8 +158,8 @@ gulp.task('build-static-pages', ['build-ia'], function () {
 gulp.task('build-ia', function () {
 	//set metadata global collections
 	metadata.genres = {};
-	metadata.plays = [];
-	metadata.theaters = [];
+	metadata.performances = [];
+	metadata.venues = [];
 
 	//for each play collect genre, group by genres
 	return gulp.src('./content/**/index.md')
@@ -170,7 +173,7 @@ gulp.task('build-ia', function () {
 
 
 		//for each file - collect data
-		.pipe(through.obj(function (file, enc, cb) {
+		.pipe(map(function (file, cb) {
 			//get play config info, append to .config property
 			var config = getConfig(file.path);
 
@@ -188,13 +191,13 @@ gulp.task('build-ia', function () {
 				});
 
 				//save global plays
-				metadata.plays.push(file.data);
+				metadata.performances.push(file.data);
 			}
 
-			//collect theaters
+			//collect venues
 			else if (file.data.type === 'place') {
 				//save global plays
-				metadata.theaters.push(file.data);
+				metadata.venues.push(file.data);
 			}
 
 			cb(null, file);
@@ -232,7 +235,7 @@ function renderMdFile(file) {
 	var data = clone(metadata);
 
 	//pass item object to items template
-	if (file.data.config && file.data.config.type) {
+	if (file.data.type) {
 		data = extend(data, {
 			item: file.data
 		});
@@ -246,7 +249,7 @@ function renderMdFile(file) {
 
 	//provide html rendering context
 	data.content = res;
-	res = tpl.render(data);
+	res = nunjucks.render('base.html', data);
 
 	return res;
 }
@@ -296,6 +299,9 @@ gulp.task('build-items', ['build-ia'], function () {
 
 /** Build images */
 gulp.task('build-images', function () {
+	var imgo = require('gulp-imagemin');
+	var resize = require('gulp-image-resize');
+
 	gulp.src('./content/**/image/*')
 		.pipe(changed(paths.dest))
 
@@ -327,6 +333,7 @@ gulp.task('build-images', function () {
 
 /** Build js */
 gulp.task('build-js', function () {
+	var browserify = require('browserify');
 	var b = browserify(paths.js);
 	b.bundle().pipe(
 		fs.createWriteStream(paths.dest + '/index.js')
@@ -336,6 +343,8 @@ gulp.task('build-js', function () {
 
 /** Build css */
 gulp.task('build-css', function () {
+	var postcss = require('gulp-postcss');
+
 	gulp.src(paths.css)
 		.pipe(plumber({
 			errorHandler: function (e) {
