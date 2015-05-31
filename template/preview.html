@@ -13,5 +13,7 @@
 		</div>
 	</div>
 {% else %}
-	<img class="{{ previewClass }}-preview" src="{{ getThumbnailUrl(item) }}"/>
+	<div class="{{ previewClass }}-preview">
+		<img class="{{ previewClass }}-preview-image" src="{{ getThumbnailUrl(item) }}"/>
+	</div>
 {% endif %}

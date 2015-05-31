@@ -19,7 +19,7 @@ var i18n = require('i18n');
 /**
  * Base template to use as a wrapper for pages
  */
-var tpl, nunjucks, marked;
+var nunjucks, marked, renderer;
 
 
 /** Paths */
@@ -95,6 +95,8 @@ gulp.task('default', function () {
 gulp.task('build-html', function () {
 	nunjucks = require('nunjucks');
 	marked = require('marked');
+	renderer = new marked.Renderer();
+	renderer.code = function (inp) { return inp; };
 
 	nunjucks.configure('./template', {
 		watch: false
@@ -245,6 +247,7 @@ function renderMdFile(file) {
 
 	//render markdown
 	res = marked(res, {
+		renderer: renderer
 	});
 
 	//provide html rendering context

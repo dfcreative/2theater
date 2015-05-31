@@ -11,6 +11,7 @@ swiperEls.forEach(function (swiperEl) {
 		loop: true,
 		autoplay: 1500,
 		speed: 400,
+		mousewheelControl: false,
 		autoplayDisableOnInteraction: true
 	});
 
