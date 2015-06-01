@@ -22,3 +22,13 @@ $ npm run watch
 * Each index markdown contains only infologic data, it should not contain representational nuances nor duplicates.
 * Name directories and data in singular manner: _image_, not _images_; _play_, not _plays_.
 * Item’s _index.md_ is a locale-independent info file, used as main. Each _i18n/{{ locale }}/index.md_ may contain locale-specific data, extending the main data.
+
+
+### Features
+
+* Theater vk/fb publics
+* Theater sites (with refs)
+	* spektakli-online
+	* grandballets.ru
+* Specktackle videos
+*

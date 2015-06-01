@@ -18,7 +18,6 @@ swiperEls.forEach(function (swiperEl) {
 	swiper.stopAutoplay();
 
 	on(swiperEl, 'mouseenter', function () {
-		swiper.slideTo(2);
 		swiper.startAutoplay();
 	});
 	on(swiperEl, 'mouseleave', function () {
