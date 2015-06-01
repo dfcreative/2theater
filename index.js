@@ -1,6 +1,32 @@
 var Swiper = require('swiper');
 var q = require('queried');
 var on = require('emmy/on');
+var Dialog = require('dialog-component');
+
+
+/** Init menu */
+var menuLink = q('.page-logo');
+var menuEl = q('.page-menu');
+
+if (menuLink) {
+	//detach menu
+	menuEl.parentNode.removeChild(menuEl);
+	menuEl.removeAttribute('hidden');
+
+	//hook up dialog
+	var dialog = new Dialog(menuEl);
+	dialog
+	.closable()
+	.effect('fade')
+	.overlay()
+	.escapable()
+
+	on(menuLink, 'click', function (e) {
+		e.preventDefault();
+		dialog.show();
+	});
+}
+
 
 /** Init swiper instances */
 var swiperEls = q.all('.swiper-container');
@@ -12,7 +38,9 @@ swiperEls.forEach(function (swiperEl) {
 		autoplay: 1500,
 		speed: 400,
 		mousewheelControl: false,
-		autoplayDisableOnInteraction: true
+		autoplayDisableOnInteraction: true,
+		simulateTouch: false,
+		preventClicks: false
 	});
 
 	swiper.stopAutoplay();
@@ -25,3 +53,4 @@ swiperEls.forEach(function (swiperEl) {
 		swiper.slideTo(1);
 	});
 });
+

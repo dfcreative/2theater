@@ -52,8 +52,10 @@
   },
   "dependencies": {
     "clean-html": "^1.3.5",
+    "dialog-component": "^0.4.4",
     "emmy": "^5.2.8",
     "normalize.css": "^3.0.3",
+    "overlay-component": "^0.3.4",
     "queried": "^1.4.1",
     "swiper": "^3.0.7"
   }

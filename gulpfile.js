@@ -13,13 +13,26 @@ var changed = require('gulp-changed');
 var clone = require('clone');
 var path = require('path');
 var i18n = require('i18n');
+var nunjucks = require('nunjucks');
+var marked = require('marked');
 
 
 
 /**
- * Base template to use as a wrapper for pages
+ * Set up templater
  */
-var nunjucks, marked, renderer;
+var renderer = new marked.Renderer();
+renderer.code = function (inp) { return inp; };
+
+//ignore paragraphs starting with html
+renderer.paragraph = function (i) {
+	if (i.trim()[0] === '<') return i;
+	return marked.Renderer.prototype.paragraph(i);
+};
+
+nunjucks.configure('./template', {
+	watch: false
+});
 
 
 /** Paths */
@@ -38,7 +51,8 @@ var metadata = {
 	locale: 'ru',
 	locales: ['en', 'ru' ,'fr'],
 	title: 'To theater',
-	description: 'A collection of the best theatrical plays'
+	description: 'A collection of the best theatrical plays',
+	items: []
 };
 
 
@@ -79,7 +93,6 @@ metadata._n = function () {
 };
 
 
-
 /** Defaultly build production */
 gulp.task('default', function () {
 	metadata.root = require('./package.json').name;
@@ -92,31 +105,8 @@ gulp.task('default', function () {
 
 
 /** Build html files */
-gulp.task('build-html', function () {
-	nunjucks = require('nunjucks');
-	marked = require('marked');
-	renderer = new marked.Renderer();
-	renderer.code = function (inp) { return inp; };
-
-	nunjucks.configure('./template', {
-		watch: false
-	});
-
-	//NOTE: not used to let debugging go faster
-	//FIXME: use in production
-	// tpl = nunjucks.compile(fs.readFileSync('./template/base.html', {
-	// 	encoding: 'utf8'
-	// }));
-
-	gulp.start([
-		'build-static-pages',
-		'build-items'
-	]);
-});
-
-
-/** Export all static pages */
-gulp.task('build-static-pages', ['build-ia'], function () {
+gulp.task('build-html', ['build-items'], function () {
+	//build all static pages
 	return gulp.src('./content/*.md')
 
 		//ignore unchanged files
@@ -156,51 +146,16 @@ gulp.task('build-static-pages', ['build-ia'], function () {
 });
 
 
-/** Build plays in the dest dir */
+/** Collect IA structure */
 gulp.task('build-ia', function () {
-	//set metadata global collections
-	metadata.genres = {};
-	metadata.performances = [];
-	metadata.venues = [];
-
-	//for each play collect genre, group by genres
-	return gulp.src('./content/*/index.md')
-		// .pipe(changed(paths.dest))
-
-		//parse front matter per file, write to data-attribute
-		.pipe(frontMatter({
-			remove: false,
-			property: 'data'
-		}))
-
-
-		//for each file - collect data
+	//for each json file - collect it’s info and provide in global env
+	return gulp.src('./content/*.json')
 		.pipe(map(function (file, cb) {
-			//get play config info, append to .config property
-			var config = getConfig(file.path);
 
-			file.data.config = config;
+			var dataName = path.basename(file.path, '.json');
 
-			//collect genres for plays
-			if (file.data.type === 'performance') {
-				//save global genres
-				var playGenres = file.data.genre || file.data.genres;
-				if (!Array.isArray(playGenres)) playGenres = [playGenres];
-				playGenres.forEach(function (genre) {
-					if (!metadata.genres[genre]) metadata.genres[genre] = [];
-
-					metadata.genres[genre].push(file.data);
-				});
-
-				//save global plays
-				metadata.performances.push(file.data);
-			}
-
-			//collect venues
-			else if (file.data.type === 'place') {
-				//save global plays
-				metadata.venues.push(file.data);
-			}
+			var data = JSON.parse(file.contents.toString('utf8').trim());
+			metadata[dataName] = data;
 
 			cb(null, file);
 		}));
@@ -242,7 +197,6 @@ function renderMdFile(file) {
 			item: file.data
 		});
 	}
-
 	res = nunjucks.renderString(res, data);
 
 	//render markdown
@@ -267,7 +221,6 @@ function renderMdFile(file) {
 
 /** Build plays pages */
 gulp.task('build-items', ['build-ia'], function () {
-
 	//find each md, render it and place to folder
 	return gulp.src('./content/*/index.md')
 		// .pipe(changed(paths.dest))
@@ -287,10 +240,11 @@ gulp.task('build-items', ['build-ia'], function () {
 		//for each file - collect data
 		.pipe(map(function (file, cb) {
 			var config = getConfig(file.path);
-
 			file.data.config = config;
-
 			file.contents = new Buffer(renderMdFile(file));
+
+			//save global items cache
+			metadata.items.push(file.data);
 
 			cb(null, file);
 		}))
@@ -373,7 +327,6 @@ gulp.task('build-css', function () {
 gulp.task('watch', function () {
 	gulp.start(['build-js', 'build-css']);
 
-	gulp.watch([paths.html, './content/**/*'], ['build-ia', 'build-static-pages', 'build-items']);
 	gulp.watch(paths.js, ['build-js']);
 	gulp.watch(paths.css, ['build-css']);
 });

@@ -1,14 +1,9 @@
 {#
-Single item rendering template - vanue, performance, static page
-Includes blocks related to rendering an  item
+	Single item rendering template - vanue, performance, static page
+	Includes blocks related to rendering an  item
 #}
 
 {% extends "base.html" %}
-
-{% block page_header %}
-	{# Show only back button on the single page link #}
-	<a href="{{ getUrl('/') }}" class="page-back-link">‹</a>
-{% endblock %}
 
 {% block page_content %}
 	{# Big slider #}
@@ -23,7 +18,7 @@ Includes blocks related to rendering an  item
 		</header>
 
 		{# Main content #}
-			{{ super() }}
+		{{ super() }}
 
 		{# Comments #}
 		<div id="disqus_thread" class="single-comments"></div>

@@ -1,5 +1,13 @@
 {
-	"Theater": "Театр",
-	"Deema Ywanov": "Дима Иванов",
-	"Made by": "Сделал"
+	"Theater": "Theater",
+	"performance": "performance",
+	"opera": "opera",
+	"jazz": "jazz",
+	"classical music": "classical music",
+	"ballet": "ballet",
+	"storytelling": "storytelling",
+	"theatre": "theatre",
+	"show": "show",
+	"Made by": "Made by",
+	"Deema Ywanov": "Deema Ywanov"
 }

@@ -7,5 +7,40 @@
 	"genre": [
 		"ballet",
 		"drama"
+	],
+
+	"category": [
+		{
+			"name": "performance",
+			"slug": "performance"
+		},
+		{
+			"name": "opera",
+			"slug": "opera"
+		},
+		{
+			"name": "jazz",
+			"slug": "jazz"
+		},
+		{
+			"name": "classical music",
+			"slug": "classical-music"
+		},
+		{
+			"name": "ballet",
+			"slug": "ballet"
+		},
+		{
+			"name": "storytelling",
+			"slug": "storytelling"
+		},
+		{
+			"name": "theatre",
+			"slug": "theatre"
+		},
+		{
+			"name": "show",
+			"slug": "show"
+		}
 	]
 }

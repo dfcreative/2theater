@@ -1,5 +1,7 @@
 @import 'normalize.css';
 @import 'swiper';
+@import 'dialog-component';
+@import 'overlay-component';
 
 html {
 	/*background-image: linear-gradient(45deg, #EC6F66 10%, #F3A183 90%);*/
@@ -30,8 +32,8 @@ html {
 	right: 0;
 	text-align: center;
 	color: white;
-	line-height: 48px;
-	min-height: 48px;
+	line-height: 3rem;
+	min-height: 3rem;
 }
 
 .page-logo {
@@ -63,34 +65,36 @@ html {
 	color: white;
 	font-style: oblique;
 	font-size: 24px;
-	border-bottom: 1px solid rgba(255,255,255,.3);
+	position: relative;
+	top: 1px;
+	margin-left: 2px;
+	border-bottom: 1px dashed rgba(255,255,255,.3);
 }
 
-.page-back-link,
-.page-menu-link {
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 48px;
-	height: 48px;
-	color: white;
-	font-weight: bolder;
-	text-decoration: none;
+.page-menu {
+	color: black;
+	font-style: italic;
+	background: white;
+	text-align: center;
 }
-.page-menu-link {
-	right: 0;
-	left: auto;
+.page-menu-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
-.page-lang-link {
-	display: none;
-	position: absolute;
-	right: 0;
-	top: 0;
-	width: 48px;
-	height: 48px;
-	color: white;
-	font-weight: bolder;
+.page-menu-list-item {
+	border-bottom: 2px dotted rgba(180,180,180,1);
+}
+.page-menu-list-item:last-of-type {
+	border-bottom: none;
+}
+.page-menu-list-item-link {
+	color: black;
+	font-size: 1.1rem;
+	line-height: 1.3rem;
 	text-decoration: none;
+	display: block;
+	padding: .6rem;
 }
 
 .page-content {
@@ -152,9 +156,7 @@ html {
 	flex: 1 0 320px;
 	position: relative;
 	margin: 0 8px 8px 0;
-	box-shadow: 0 1px 0 1px rgba(0,0,0,.1);
 	transition: box-shadow .2s ease-in-out;
-	overflow: hidden;
 }
 .feed-item-stub {
 	height: 0;
@@ -166,10 +168,24 @@ html {
 	box-shadow: 0 1px 8px rgba(0,0,0,.5), 0 2px 24px rgba(0,0,0,.3);
 }
 .feed-item-link {
+	position: relative;
+	display: block;
+}
+.feed-item-preview-container {
+	width: 100%;
+	position: relative;
+	height: auto;
+	padding-bottom: 61.8%;
+	overflow: hidden;
+	box-shadow: 0 1px 0 1px rgba(0,0,0,.1);
 	display: block;
 }
 .feed-item-preview {
-	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 }
 .feed-item-preview-image {
 	display: block;
@@ -181,17 +197,44 @@ html {
 	position: absolute;
 	bottom: 0;
 	right: 0;
-	color: rgba(255,255,255,.5);
-	padding: 2rem 1rem .8rem 50%;
-	background: radial-gradient(ellipse 100% 100% at right bottom, rgba(0,0,0,.85) 0%, rgba(0,0,0,.6) 40%, rgba(0,0,0,0) 100%);
+	left: 0;
+	max-width: 80%;
+	margin: 0 auto;
+	color: rgba(255,255,255,.8);
+	/*text-shadow: 0 1px 2px rgba(0,0,0,.3);*/
+	padding: 3rem 1rem .8rem;
+	background: radial-gradient(ellipse farthest-side at center 80%, rgba(0,0,0,.6) 5%, rgba(0,0,0,.3) 40%, rgba(0,0,0,.09) 72%, rgba(0,0,0,0) 95%);
 }
 .feed-item-header-title {
-	text-align: right;
-	font-size: .6rem;
+	text-align: center;
+	font-size: .8rem;
 	line-height: 1.3rem;
 	font-weight: normal;
 	font-family: serif;
 	font-variant: small-caps;
-	letter-spacing: 1ex;
+	letter-spacing: .9ex;
 	margin: 0;
+}
+
+
+
+/** Extra styles */
+.dialog {
+	max-width: 50%;
+	margin: auto;
+	left: 0;
+	right: 0;
+}
+.dialog .content {
+	padding: .7rem 1rem;
+}
+.dialog .close {
+	top: 0;
+	right: 0;
+	font-family: serif;
+	font-size: 1.2rem;
+	width: 2rem;
+	height: 2rem;
+	line-height: 2rem;
+	text-align: center;
 }

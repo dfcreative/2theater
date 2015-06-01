@@ -13,13 +13,20 @@
 
 <header class="page-header">
 	{% block page_header %}
-		<a href="{{ getUrl('/') }}" class="page-menu-link">☰</a>
-
 		<div class="page-logo">
-			<a href="{{ getUrl('/') }}" class="page-logo-link">{{ _('Theater') }}</a> <sup>α</sup>
+			<a href="{{ getUrl('/') }}#categories" class="page-logo-link">{{ _('Theater') }}</a> <sup>α</sup>
 		</div>
 
-		<a href="{{ getUrl('/') }}" class="page-lang-link">{{ locale|capitalize }}</a>
+		{# List of site categories #}
+		<nav class="page-menu" id="categories" hidden>
+			<ul class="page-menu-list">
+			{% for item in infology.category %}
+				<li class="page-menu-list-item">
+					<a class="page-menu-list-item-link" href="/{{ item.slug }}">{{ _(item.name)|capitalize }}</a>
+				</li>
+			{% endfor %}
+			</ul>
+		</nav>
 	{% endblock %}
 </header>
 
