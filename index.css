@@ -153,10 +153,12 @@ html {
 	margin-right: -8px;
 }
 .feed-item {
+	color: black;
 	flex: 1 0 320px;
 	position: relative;
+	overflow: hidden;
 	margin: 0 8px 8px 0;
-	transition: box-shadow .2s ease-in-out;
+	transition: box-shadow .15s ease-out;
 }
 .feed-item-stub {
 	height: 0;
@@ -165,7 +167,7 @@ html {
 .feed-item:hover{
 	/* Such a z-index to cover swipers below */
 	z-index: 100;
-	box-shadow: 0 1px 8px rgba(0,0,0,.5), 0 2px 24px rgba(0,0,0,.3);
+	box-shadow: 0 2px 20px -1px currentcolor;
 }
 .feed-item-link {
 	position: relative;
@@ -194,26 +196,35 @@ html {
 
 .feed-item-header {
 	z-index: 100;
+	opacity: 1;
 	position: absolute;
 	bottom: 0;
 	right: 0;
 	left: 0;
 	max-width: 80%;
 	margin: 0 auto;
+	text-align: center;
 	color: rgba(255,255,255,.8);
-	/*text-shadow: 0 1px 2px rgba(0,0,0,.3);*/
+	text-shadow: 0 1px 8px rgba(0,0,0,.9);
 	padding: 3rem 1rem .8rem;
-	background: radial-gradient(ellipse farthest-side at center 80%, rgba(0,0,0,.6) 5%, rgba(0,0,0,.3) 40%, rgba(0,0,0,.09) 72%, rgba(0,0,0,0) 95%);
+	background-image: radial-gradient(ellipse farthest-side at center 80%, rgba(0,0,0,.6) 5%, rgba(0,0,0,.3) 40%, rgba(0,0,0,.09) 72%, rgba(0,0,0,0) 95%);
+	transform: translate3d(0, 0, 0);
+	transition: opacity .3s ease-out, transform .35s ease-out;
+}
+.feed-item:hover .feed-item-header {
+	opacity: .09;
+	transform: translate3d(0, 3px, 0);
 }
 .feed-item-header-title {
-	text-align: center;
+	display: inline-block;
 	font-size: .8rem;
 	line-height: 1.3rem;
-	font-weight: normal;
+	font-weight: bold;
 	font-family: serif;
 	font-variant: small-caps;
 	letter-spacing: .9ex;
 	margin: 0;
+	border-bottom: 1px solid rgba(255,255,255,.2);
 }
 
 

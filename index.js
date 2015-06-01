@@ -35,8 +35,8 @@ swiperEls.forEach(function (swiperEl) {
 	var swiper = new Swiper(swiperEl, {
 		effect: 'fade',
 		loop: true,
-		autoplay: 1500,
-		speed: 400,
+		autoplay: 1300,
+		speed: 350,
 		mousewheelControl: false,
 		autoplayDisableOnInteraction: true,
 		simulateTouch: false,
@@ -45,10 +45,10 @@ swiperEls.forEach(function (swiperEl) {
 
 	swiper.stopAutoplay();
 
-	on(swiperEl, 'mouseenter', function () {
+	on(swiperEl.parentNode, 'mouseenter', function () {
 		swiper.startAutoplay();
 	});
-	on(swiperEl, 'mouseleave', function () {
+	on(swiperEl.parentNode, 'mouseleave', function () {
 		swiper.stopAutoplay();
 		swiper.slideTo(1);
 	});

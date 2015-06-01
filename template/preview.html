@@ -2,7 +2,7 @@
 
 {% if not previewClass %}{% set previewClass = "item" %}{% endif %}
 
-<div class="{{ previewClass }}-preview-container">
+<div class="{{ previewClass }}-preview-container" style="background-color: {{ item.config.color }}; background-image: linear-gradient({{ item.config.color.saturate(0.2).lighten(0.2) }}, {{ item.config.color.darken(0.2) }})">
 {% if item and item.config.images %}
 	<div class="{{ previewClass }}-preview swiper-container">
 		<div class="swiper-wrapper">

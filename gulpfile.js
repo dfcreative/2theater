@@ -15,7 +15,23 @@ var path = require('path');
 var i18n = require('i18n');
 var nunjucks = require('nunjucks');
 var marked = require('marked');
+var readimage = require('readimage');
+var quantize = require('quantize');
+var Color = require('color');
 
+//preset stringifier
+Color.prototype.toString = function () {
+	return this.rgbString();
+};
+
+
+/**
+ * Don’t calc mean color twice
+ */
+var colorsCache = new Map();
+
+/** Don’t read configs twice */
+var configsCache = new Map();
 
 
 /**
@@ -62,6 +78,7 @@ metadata.getThumbnailUrl = function (item, url) {
 
 	var thumbUrl = url || item.config.thumbnail;
 
+	//FIXME: handle absolute urls
 	return path.normalize('/' + metadata.root + '/' + item.config.slug + '/' + thumbUrl);
 };
 
@@ -165,6 +182,10 @@ gulp.task('build-ia', function () {
 /** Return config for an .md file */
 function getConfig(filePath) {
 	var fileDir = path.dirname(filePath);
+	var resolvedPath = path.resolve(fileDir);
+
+	//return cached
+	if (configsCache.get(resolvedPath)) return configsCache.get(resolvedPath);
 
 	try {
 
@@ -180,7 +201,43 @@ function getConfig(filePath) {
 		config = {slug: path.basename(fileDir)};
 	}
 
+	//save cache
+	configsCache.set(resolvedPath, config);
+
 	return config;
+}
+
+/** Calculate image dominant color */
+function calcImageColor(path, cb) {
+	// console.log('extract', path);
+	if (colorsCache.get(path)) return cb(colorsCache.get(path));
+
+	var file = fs.readFileSync(path);
+
+	var res = readimage(file, function (err, image) {
+		if (err) {
+			console.log("failed to parse the image", err);
+		}
+
+		//transform image data for quantization
+		var rawData = image.frames[0].data;
+		var len = rawData.length;
+		var data = [];
+		var maxColors = 4;
+
+		for (var i = 0; i < len; i += 4) {
+			// semi-transparent
+			if (rawData[i + 3] < 0xaa) continue;
+			data.push([rawData[i], rawData[i + 1], rawData[i + 2]]);
+		}
+
+		var colors = quantize(data, maxColors).palette();
+
+		//save cache
+		colorsCache.set(path, colors);
+
+		cb(colors);
+	});
 }
 
 /** Return rendered markdown string */
@@ -241,12 +298,27 @@ gulp.task('build-items', ['build-ia'], function () {
 		.pipe(map(function (file, cb) {
 			var config = getConfig(file.path);
 			file.data.config = config;
-			file.contents = new Buffer(renderMdFile(file));
 
-			//save global items cache
-			metadata.items.push(file.data);
+			//calc mean image color
+			if (config.thumbnail && !config.color) {
+				calcImageColor(
+					path.resolve(path.dirname(file.path) + '/' + config.thumbnail),
+					function (colors) {
+						//add color to a file
+						file.data.config.color = toRgb(colors[0]);
+						file.data.config.colors = colors.map(toRgb);
 
-			cb(null, file);
+						file.contents = new Buffer(renderMdFile(file));
+
+						//save global items cache
+						metadata.items.push(file.data);
+
+						cb(null, file);
+					}
+				);
+			} else {
+				cb(null, file);
+			}
 		}))
 
 		//rename files to be served as index.html in directories
@@ -259,6 +331,12 @@ gulp.task('build-items', ['build-ia'], function () {
 
 		.pipe(gulp.dest(paths.dest));
 });
+
+
+/** Convert rgb array to css string */
+function toRgb(arr) {
+	return Color().rgb(arr);
+}
 
 
 /** Build images */
