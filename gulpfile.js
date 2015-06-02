@@ -15,8 +15,7 @@ var path = require('path');
 var i18n = require('i18n');
 var nunjucks = require('nunjucks');
 var marked = require('marked');
-var readimage = require('readimage');
-var quantize = require('quantize');
+var palette = require('image-palette');
 var Color = require('color');
 
 //preset stringifier
@@ -24,11 +23,6 @@ Color.prototype.toString = function () {
 	return this.rgbString();
 };
 
-
-/**
- * Don’t calc mean color twice
- */
-var colorsCache = new Map();
 
 /** Don’t read configs twice */
 var configsCache = new Map();
@@ -207,38 +201,6 @@ function getConfig(filePath) {
 	return config;
 }
 
-/** Calculate image dominant color */
-function calcImageColor(path, cb) {
-	// console.log('extract', path);
-	if (colorsCache.get(path)) return cb(colorsCache.get(path));
-
-	var file = fs.readFileSync(path);
-
-	var res = readimage(file, function (err, image) {
-		if (err) {
-			console.log("failed to parse the image", err);
-		}
-
-		//transform image data for quantization
-		var rawData = image.frames[0].data;
-		var len = rawData.length;
-		var data = [];
-		var maxColors = 4;
-
-		for (var i = 0; i < len; i += 4) {
-			// semi-transparent
-			if (rawData[i + 3] < 0xaa) continue;
-			data.push([rawData[i], rawData[i + 1], rawData[i + 2]]);
-		}
-
-		var colors = quantize(data, maxColors).palette();
-
-		//save cache
-		colorsCache.set(path, colors);
-
-		cb(colors);
-	});
-}
 
 /** Return rendered markdown string */
 function renderMdFile(file) {
@@ -301,7 +263,7 @@ gulp.task('build-items', ['build-ia'], function () {
 
 			//calc mean image color
 			if (config.thumbnail && !config.color) {
-				calcImageColor(
+				palette(
 					path.resolve(path.dirname(file.path) + '/' + config.thumbnail),
 					function (colors) {
 						//add color to a file
@@ -314,7 +276,8 @@ gulp.task('build-items', ['build-ia'], function () {
 						metadata.items.push(file.data);
 
 						cb(null, file);
-					}
+					},
+					6
 				);
 			} else {
 				cb(null, file);

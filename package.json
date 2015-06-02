@@ -50,6 +50,7 @@
     "postcss-import": "^5.2.2",
     "quantize": "^1.0.1",
     "readimage": "^1.1.1",
+    "image-palette": "^1.0.0",
     "through2": "^0.6.5"
   },
   "dependencies": {

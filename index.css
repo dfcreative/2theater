@@ -212,6 +212,7 @@ html {
 	transition: opacity .3s ease-out, transform .35s ease-out;
 }
 .feed-item:hover .feed-item-header {
+	color: white;
 	/*opacity: .09;*/
 	/*transform: translate3d(0, 3px, 0);*/
 }
@@ -224,7 +225,7 @@ html {
 	font-variant: small-caps;
 	letter-spacing: .9ex;
 	margin: 0;
-	border-bottom: 1px solid rgba(255,255,255,.2);
+	/*border-bottom: 1px solid rgba(255,255,255,.2);*/
 }
 
 
