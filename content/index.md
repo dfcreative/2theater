@@ -4,6 +4,7 @@
 	<article class="feed-item" {% if item.config.color %}style="color: {{ item.config.color.darken(0.5).desaturate(0.2) }}"{% endif %}>
 		<a href="{{ getItemUrl(item) }}" class="feed-item-link">
 			{% set previewClass = "feed-item" %}
+			{% set previewSize = "m" %}
 			{% include "preview.html" %}
 
 			{# Calc per-item colors #}

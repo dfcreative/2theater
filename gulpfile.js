@@ -18,6 +18,22 @@ var marked = require('marked');
 var palette = require('image-palette');
 var Color = require('color');
 
+
+
+/** Get translation for the current locale */
+i18n.configure({
+	locales: metadata.locales,
+	defaultLocale: metadata.locale,
+	directory: paths.locale
+});
+metadata._ = function () {
+	return i18n.__.apply(this, arguments);
+};
+metadata._n = function () {
+	return i18n.__n.apply(this, arguments);
+};
+
+
 //preset stringifier
 Color.prototype.toString = function () {
 	return this.rgbString();
@@ -78,7 +94,7 @@ metadata.getThumbnailUrl = function (item, url, size) {
 	var res = path.normalize('/' + metadata.root + '/' + item.config.slug + '/' + thumbUrl);
 
 	//insert thumb size
-	res = path.dirname(res) + '/' + path.basename(res).slice('.')[0] + '-' + size+ path.extname(res);
+	res = path.dirname(res) + '/' + path.basename(res).slice('.')[0] + (size ? '-' + size : '') + path.extname(res);
 
 	return res;
 };
@@ -94,20 +110,6 @@ metadata.getItemUrl = function (item) {
 metadata.getUrl = function (path) {
 	if (path[0] === '/') path = path.slice(1);
 	return '/' + metadata.root + '/' + path;
-};
-
-
-/** Get translation for the current locale */
-i18n.configure({
-	locales: metadata.locales,
-	defaultLocale: metadata.locale,
-	directory: paths.locale
-});
-metadata._ = function () {
-	return i18n.__.apply(this, arguments);
-};
-metadata._n = function () {
-	return i18n.__n.apply(this, arguments);
 };
 
 
@@ -327,7 +329,7 @@ gulp.task('build-images', function () {
 /** Copy original images */
 gulp.task('build-images-original', function () {
 	return gulp.src('./content/*/image/*')
-		// .pipe(changed(paths.dest))
+		.pipe(changed(paths.dest))
 
 		.pipe(rename(function (file) {
 			var configPath = './content/' + path.dirname(file.dirname) + '/config.json';
@@ -340,7 +342,7 @@ gulp.task('build-images-original', function () {
 		//optimize image
 		.pipe(imgo({
 			progressive: true,
-			optimizationLevel: 7
+			optimizationLevel: 1
 		}))
 
 		.pipe(gulp.dest(paths.dest));
@@ -358,7 +360,7 @@ gulp.task('build-images-l', function () {
 
 			file.dirname = config.slug + '/image';
 
-			file.basename += '-l'
+			file.basename += '-l';
 		}))
 
 		//resize to golden ratio
@@ -372,7 +374,7 @@ gulp.task('build-images-l', function () {
 		//optimize image
 		.pipe(imgo({
 			progressive: true,
-			optimizationLevel: 7
+			optimizationLevel: 4
 		}))
 
 		.pipe(gulp.dest(paths.dest));
@@ -404,7 +406,7 @@ gulp.task('build-images-m', function () {
 		//optimize image
 		.pipe(imgo({
 			progressive: true,
-			optimizationLevel: 7
+			optimizationLevel: 6
 		}))
 
 		.pipe(gulp.dest(paths.dest));

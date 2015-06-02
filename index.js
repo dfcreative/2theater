@@ -28,10 +28,10 @@ if (menuLink) {
 }
 
 
-/** Init swiper instances */
-var swiperEls = q.all('.swiper-container');
+/** Init swiper instances in feed */
+var feedSwiperEls = q.all('.feed-item-preview');
 
-swiperEls.forEach(function (swiperEl) {
+feedSwiperEls.forEach(function (swiperEl) {
 	var swiper = new Swiper(swiperEl, {
 		effect: 'fade',
 		loop: true,
@@ -54,3 +54,17 @@ swiperEls.forEach(function (swiperEl) {
 	});
 });
 
+
+/** Init swiper gallery on single item */
+
+var singleSwiperEls = q.all('.single-preview');
+
+singleSwiperEls.forEach(function (swiperEl) {
+	var swiper = new Swiper(swiperEl, {
+		effect: 'slide',
+		loop: true,
+		speed: 350,
+		prevButton: '.swiper-button-prev',
+		nextButton: '.swiper-button-next'
+	});
+});

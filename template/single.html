@@ -7,15 +7,26 @@
 
 {% block page_content %}
 	{# Big slider #}
-	{% set previewClass = "page" %}
-	{% set previewSize = "l" %}
-	{% include "preview.html" %}
+	<div class="single-preview-container">
+		<div class="single-preview swiper-container">
+			<div class="swiper-button-prev"></div>
+			<div class="swiper-button-next"></div>
+
+			<div class="swiper-wrapper">
+				{% for image in item.config.images %}
+					<div class="swiper-slide">
+						<img class="single-preview-image" src="{{ getThumbnailUrl(item, image, previewSize ) }}" srcset="{{ getThumbnailUrl(item, image, previewSize ) }} 1x, {{ getThumbnailUrl(item, image, 'l' ) }} 2x">
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
 
 	<div class="single-content">
 		{# Header #}
 		<header class="single-header">
-			<h1 class="single-title">{{ item.title }}</h1>
-			<div class="single-original-title">{{ item.original_title }}</div>
+			<h1 class="single-header-title">{{ item.title }}</h1>
+			<div class="single-header-original-title">{{ item.original_title }}</div>
 		</header>
 
 		{# Main content #}
