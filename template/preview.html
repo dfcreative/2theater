@@ -1,6 +1,7 @@
 {# Item preview gallery/image: used in small posts and in single items #}
 
 {% if not previewClass %}{% set previewClass = "item" %}{% endif %}
+{% if not previewSize %}{% set previewSize = "m" %}{% endif %}
 
 <div class="{{ previewClass }}-preview-container" style="background-color: {{ item.config.color }}; background-image: linear-gradient({{ item.config.color.saturate(0.2).lighten(0.2) }}, {{ item.config.color.darken(0.2) }})">
 {% if item and item.config.images %}
@@ -8,14 +9,14 @@
 		<div class="swiper-wrapper">
 			{% for image in item.config.images %}
 				<div class="swiper-slide">
-					<img class="{{ previewClass }}-preview-image" src="{{ getThumbnailUrl(item, image) }}">
+					<img class="{{ previewClass }}-preview-image" src="{{ getThumbnailUrl(item, image, previewSize ) }}">
 				</div>
 			{% endfor %}
 		</div>
 	</div>
 {% else %}
 	<div class="{{ previewClass }}-preview">
-		<img class="{{ previewClass }}-preview-image" src="{{ getThumbnailUrl(item) }}"/>
+		<img class="{{ previewClass }}-preview-image" src="{{ getThumbnailUrl(item, item.thumbnail, previewSize ) }}"/>
 	</div>
 {% endif %}
 </div>

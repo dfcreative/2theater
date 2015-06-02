@@ -67,13 +67,20 @@ var metadata = {
 
 
 /** Return absolute url from the  */
-metadata.getThumbnailUrl = function (item, url) {
+metadata.getThumbnailUrl = function (item, url, size) {
 	if (!item.config) return;
+
+	size = size || '';
 
 	var thumbUrl = url || item.config.thumbnail;
 
 	//FIXME: handle absolute urls
-	return path.normalize('/' + metadata.root + '/' + item.config.slug + '/' + thumbUrl);
+	var res = path.normalize('/' + metadata.root + '/' + item.config.slug + '/' + thumbUrl);
+
+	//insert thumb size
+	res = path.dirname(res) + '/' + path.basename(res).slice('.')[0] + '-' + size+ path.extname(res);
+
+	return res;
 };
 
 /** Return item url */
@@ -292,7 +299,7 @@ gulp.task('build-items', ['build-ia'], function () {
 			file.dirname = config.slug;
 		}))
 
-		.pipe(gulp.dest(paths.dest));
+		.pipe(gulp.dest(paths.dest))
 });
 
 
@@ -303,12 +310,24 @@ function toRgb(arr) {
 
 
 /** Build images */
+var imgo, resize;
 gulp.task('build-images', function () {
-	var imgo = require('gulp-imagemin');
-	var resize = require('gulp-image-resize');
+	imgo = require('gulp-imagemin');
+	resize = require('gulp-image-resize');
 
-	gulp.src('./content/*/image/*')
-		.pipe(changed(paths.dest))
+	return gulp.start([
+		'build-images-original',
+		'build-images-l',
+		'build-images-m',
+		'build-images-s'
+	]);
+});
+
+
+/** Copy original images */
+gulp.task('build-images-original', function () {
+	return gulp.src('./content/*/image/*')
+		// .pipe(changed(paths.dest))
 
 		.pipe(rename(function (file) {
 			var configPath = './content/' + path.dirname(file.dirname) + '/config.json';
@@ -318,10 +337,98 @@ gulp.task('build-images', function () {
 			file.dirname = config.slug + '/image';
 		}))
 
-		//resize
+		//optimize image
+		.pipe(imgo({
+			progressive: true,
+			optimizationLevel: 7
+		}))
+
+		.pipe(gulp.dest(paths.dest));
+});
+
+/** make big thumbnails 1024.. */
+gulp.task('build-images-l', function () {
+	return gulp.src('./content/*/image/*')
+		// .pipe(changed(paths.dest))
+
+		.pipe(rename(function (file) {
+			var configPath = './content/' + path.dirname(file.dirname) + '/config.json';
+
+			config = getConfig(configPath);
+
+			file.dirname = config.slug + '/image';
+
+			file.basename += '-l'
+		}))
+
+		//resize to golden ratio
 		.pipe(resize({
-			width : 800,
-			height : 510,
+			width : 1024,
+			height : 633,
+			crop : true,
+			upscale : true
+		}))
+
+		//optimize image
+		.pipe(imgo({
+			progressive: true,
+			optimizationLevel: 7
+		}))
+
+		.pipe(gulp.dest(paths.dest));
+});
+
+/** make medium thumbnails (320..640) */
+gulp.task('build-images-m', function () {
+	return gulp.src('./content/*/image/*')
+		// .pipe(changed(paths.dest))
+
+		.pipe(rename(function (file) {
+			var configPath = './content/' + path.dirname(file.dirname) + '/config.json';
+
+			config = getConfig(configPath);
+
+			file.dirname = config.slug + '/image';
+
+			file.basename += '-m';
+		}))
+
+		//resize to golden ratio
+		.pipe(resize({
+			width : 640,
+			height : 396,
+			crop : true,
+			upscale : true
+		}))
+
+		//optimize image
+		.pipe(imgo({
+			progressive: true,
+			optimizationLevel: 7
+		}))
+
+		.pipe(gulp.dest(paths.dest));
+});
+
+/** Small thumbnails ..320 */
+gulp.task('build-images-s', function () {
+	return gulp.src('./content/*/image/*')
+		// .pipe(changed(paths.dest))
+
+		.pipe(rename(function (file) {
+			var configPath = './content/' + path.dirname(file.dirname) + '/config.json';
+
+			config = getConfig(configPath);
+
+			file.dirname = config.slug + '/image';
+
+			file.basename += '-s';
+		}))
+
+		//resize to golden ratio
+		.pipe(resize({
+			width : 320,
+			height : 198,
 			crop : true,
 			upscale : true
 		}))
