@@ -5,7 +5,8 @@ var Dialog = require('dialog-component');
 var closest = require('closest');
 
 /** Init menu */
-var menuLink = q('.page-logo');
+
+var menuLink = q('.page-menu-link');
 var menuEl = q('.page-menu');
 
 if (menuLink) {
@@ -29,6 +30,7 @@ if (menuLink) {
 
 
 /** Init swiper instances in feed */
+
 var feedSwiperEls = q.all('.feed-item-preview');
 
 feedSwiperEls.forEach(function (swiperEl) {

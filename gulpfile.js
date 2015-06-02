@@ -20,6 +20,26 @@ var Color = require('color');
 
 
 
+/** Paths */
+var paths = {
+	html: './template/*',
+	dest: '_site',
+	js: './index.js',
+	css: './index.css',
+	locale: './locale'
+};
+
+/** Project metadata/env. Everything in there will be accessible while rendering */
+var metadata = {
+	root: '_site',
+	locale: 'ru',
+	locales: ['en', 'ru' ,'fr'],
+	title: 'To theater',
+	description: 'A collection of the best theatrical plays',
+	items: []
+};
+
+
 /** Get translation for the current locale */
 i18n.configure({
 	locales: metadata.locales,
@@ -60,26 +80,6 @@ nunjucks.configure('./template', {
 	watch: false
 });
 
-
-/** Paths */
-var paths = {
-	html: './template/*',
-	dest: '_site',
-	js: './index.js',
-	css: './index.css',
-	locale: './locale'
-};
-
-
-/** Project metadata/env. Everything in there will be accessible while rendering */
-var metadata = {
-	root: '_site',
-	locale: 'ru',
-	locales: ['en', 'ru' ,'fr'],
-	title: 'To theater',
-	description: 'A collection of the best theatrical plays',
-	items: []
-};
 
 
 /** Return absolute url from the  */

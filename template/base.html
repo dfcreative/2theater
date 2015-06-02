@@ -14,8 +14,10 @@
 <header class="page-header">
 	{% block page_header %}
 		<div class="page-logo">
-			<a href="{{ getUrl('/') }}#categories" class="page-logo-link">{{ _('Theater') }}</a> <sup>α</sup>
+			<a href="{{ getUrl('/') }}" class="page-logo-link">{{ _('Theater') }}</a> <sup>α</sup>
 		</div>
+
+		<a href="#categories" class="page-menu-link">≡</a>
 
 		{# List of site categories #}
 		<nav class="page-menu" id="categories" hidden>
