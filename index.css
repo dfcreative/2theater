@@ -150,14 +150,14 @@ html {
 .feed {
 	display: flex;
 	flex-flow: row wrap;
-	margin-right: -8px;
+	margin-right: -4px;
 }
 .feed-item {
 	color: black;
-	flex: 1 0 320px;
+	flex: 1 0 300px;
 	position: relative;
 	overflow: hidden;
-	margin: 0 8px 8px 0;
+	margin: 0 4px 4px 0;
 	transition: box-shadow .15s ease-out;
 }
 .feed-item-stub {
@@ -166,8 +166,8 @@ html {
 }
 .feed-item:hover{
 	/* Such a z-index to cover swipers below */
-	z-index: 100;
-	box-shadow: 0 2px 20px -1px currentcolor;
+	/*z-index: 100;*/
+	/*box-shadow: 0 2px 20px -1px currentcolor;*/
 }
 .feed-item-link {
 	position: relative;
@@ -212,12 +212,12 @@ html {
 	transition: opacity .3s ease-out, transform .35s ease-out;
 }
 .feed-item:hover .feed-item-header {
-	opacity: .09;
-	transform: translate3d(0, 3px, 0);
+	/*opacity: .09;*/
+	/*transform: translate3d(0, 3px, 0);*/
 }
 .feed-item-header-title {
-	display: inline-block;
-	font-size: .8rem;
+	display: inline;
+	font-size: 1rem;
 	line-height: 1.3rem;
 	font-weight: bold;
 	font-family: serif;

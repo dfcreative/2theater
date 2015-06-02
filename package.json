@@ -53,12 +53,13 @@
     "through2": "^0.6.5"
   },
   "dependencies": {
-    "xtend": "^4.0.0",
+    "closest": "0.0.1",
     "dialog-component": "^0.4.4",
     "emmy": "^5.2.8",
     "normalize.css": "^3.0.3",
     "overlay-component": "^0.3.4",
     "queried": "^1.4.1",
-    "swiper": "^3.0.7"
+    "swiper": "^3.0.7",
+    "xtend": "^4.0.0"
   }
 }

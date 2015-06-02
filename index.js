@@ -2,7 +2,7 @@ var Swiper = require('swiper');
 var q = require('queried');
 var on = require('emmy/on');
 var Dialog = require('dialog-component');
-
+var closest = require('closest');
 
 /** Init menu */
 var menuLink = q('.page-logo');
@@ -45,10 +45,10 @@ swiperEls.forEach(function (swiperEl) {
 
 	swiper.stopAutoplay();
 
-	on(swiperEl.parentNode, 'mouseenter', function () {
+	on(closest(swiperEl, '.feed-item'), 'mouseenter', function () {
 		swiper.startAutoplay();
 	});
-	on(swiperEl.parentNode, 'mouseleave', function () {
+	on(closest(swiperEl, '.feed-item'), 'mouseleave', function () {
 		swiper.stopAutoplay();
 		swiper.slideTo(1);
 	});
