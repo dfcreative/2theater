@@ -1,5 +1,7 @@
 # To-theater
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/dfcreative/2theater.svg)](https://greenkeeper.io/)
+
 A collection of famous theater plays must see.
 
 To build production into `package.name` root, run
